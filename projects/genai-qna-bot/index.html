@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Q&A Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #232f3e;
+            color: white;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { color: #ff9900; }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #ff9900;
+            color: black;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #e68a00; }
+        #answer {
+            background-color: #31414f;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            min-height: 100px;
+            display: none;
+        }
+        .loading { color: #ff9900; }
+        .label {
+            font-size: 14px;
+            color: #aaaaaa;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>☁️ GenAI Document Q&A Bot</h1>
+    <p>Ask questions about your uploaded PDF documents powered by Google Gemini + AWS</p>
+
+    <p class="label">PDF Filename in S3:</p>
+    <input type="text" id="filename" placeholder="e.g. resume.pdf" />
+
+    <p class="label">Your Question:</p>
+    <textarea id="question" rows="3"
+        placeholder="e.g. What are the key skills in this document?"></textarea>
+
+    <button onclick="askQuestion()">Ask Question</button>
+
+    <div id="answer">
+        <h3>💬 Answer:</h3>
+        <p id="answer-text"></p>
+    </div>
+
+    <script>
+        const API_URL = 'https://y6eog5vhdi.execute-api.ap-southeast-1.amazonaws.com/prod/ask';
+
+        async function askQuestion() {
+            const filename = document.getElementById('filename').value;
+            const question = document.getElementById('question').value;
+            const answerDiv = document.getElementById('answer');
+            const answerText = document.getElementById('answer-text');
+
+            if (!filename || !question) {
+                alert('Please enter both filename and question!');
+                return;
+            }
+
+            answerDiv.style.display = 'block';
+            answerText.innerHTML = '<span class="loading">⏳ Thinking...</span>';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename, question })
+                });
+
+                const data = await response.json();
+                answerText.textContent = data.answer || data.error;
+            } catch (error) {
+                answerText.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
