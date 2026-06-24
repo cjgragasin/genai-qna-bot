@@ -98,6 +98,7 @@ graph TD
 - Add to Lambda environment variables
 
 ## Test the API
+PDF Name: Christine-Gragasin.pdf
 ```bash
 curl -X POST "https://your-api-id.execute-api.ap-southeast-1.amazonaws.com/prod/ask" \
   -H "Content-Type: application/json" \
