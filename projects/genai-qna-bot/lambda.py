@@ -7,6 +7,7 @@ import base64
 s3 = boto3.client('s3', region_name='ap-southeast-1')
 
 BUCKET_NAME = os.environ.get('BUCKET_NAME', 'cjgragasin.ai.project')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 
 def lambda_handler(event, context):
@@ -39,7 +40,7 @@ def lambda_handler(event, context):
         pdf_base64 = base64.standard_b64encode(pdf_bytes).decode('utf-8')
 
         # Call Gemini API
-        url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={InputAPIHere}'
+        url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={GEMINI_API_KEY}'
 
         payload = json.dumps({
             'contents': [{
